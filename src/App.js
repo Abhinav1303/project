@@ -104,13 +104,16 @@ export const Homepage= () =>{
     console.log(postsList);
     
   }
+ 
+  useEffect(()=> {
   getPosts();
+  },[])
   return (
     
     
       <div>
         <Button onClick={addPost} variant='success'>Add a post</Button>
-        <p></p>
+        {postsList ? postsList.map((each_post) => {return <p>{each_post.Title}</p>}): <p></p>}
         
 
 <MDBCarousel showIndicators showControls fade>
