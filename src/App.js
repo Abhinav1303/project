@@ -22,6 +22,19 @@ import {
   MDBCarousel,
   MDBCarouselItem,
 } from 'mdb-react-ui-kit';
+import {db} from './firebase_config';
+
+
+import {useNavigate} from 'react-router-dom';
+
+import {NavbarDefined} from './navbar'
+import {addDoc,collection} from 'firebase/firestore';
+import {getDocs} from 'firebase/firestore';
+
+
+
+  
+
 
 // export const ExampleCarouselImage= (props) => {
 //   return (
@@ -54,18 +67,51 @@ export const Loader= () => {
   )
 }
 export const Homepage= () =>{
-  const [loading,setLoading]=useState(false);
-  useEffect(()=> {
-    setLoading(true);
-    setTimeout(()=>{
-      setLoading(false)
+  // const [loading,setLoading]=useState(false);
+  // useEffect(()=> {
+  //   setLoading(true);
+  //   setTimeout(()=>{
+  //     setLoading(false)
 
-    },1000);
-  },[]);
+  //   },1000);
+  // },[]);
+  const reference=collection(db,"posts");
+  const data={
+    title:"First Post",
+    description: "This is my first post",
+    username:"user.displayName",
+    id:"user.uid"
+
+  }
+  const addPost = () => {
+    addDoc(reference,{
+      Title:data.title,
+      Description:data.description,
+      Username:'Abhinav_13',
+      post_id:'3'
+    })
+
+  }
+  const [postsList,setPosts]=useState(null);
+  const reference_2=collection(db,'posts');
+
+  const getPosts= async() => {
+    const data_returned=await getDocs(reference_2);
+    setPosts(data_returned.docs.map((doc) => (
+      {...doc.data(),post_id:doc.id}
+
+    )));
+    console.log(postsList);
+    
+  }
+  getPosts();
   return (
     
     
       <div>
+        <Button onClick={addPost} variant='success'>Add a post</Button>
+        <p></p>
+        
 
 <MDBCarousel showIndicators showControls fade>
       <MDBCarouselItem
@@ -202,55 +248,34 @@ export const Features = () => {
 
 
 function App() {
-  const [loading,setLoading]=useState(false);
-  useEffect(()=> {
-    setLoading(true);
-    setTimeout(()=>{
-      setLoading(false)
+  
+  
+  
+  
+  // const [loading,setLoading]=useState(false);
+  // useEffect(()=> {
+  //   setLoading(true);
+  //   setTimeout(()=>{
+  //     setLoading(false)
 
-    },5000);
-  },[]);
+  //   },5000);
+  // },[]);
+  
+  // 
 
   return (
     <div className='App'>
-      { loading ? (<Loader/>) : (<Router>
+      
+        <Router>
+          {<NavbarDefined />}
         
-        <Navbar collapseOnSelect expand="lg" className="custom">
-        <Container>
-          <Navbar.Brand href="/home"><img style={{height:40,width:40}} src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/c0840e59-db43-4681-ae7b-31a04dc4bc55/d7eqdvw-4e97ac92-e4b9-4498-9655-e4d612eb478b.png/v1/fill/w_1192,h_670/random_logo_by_criticl_d7eqdvw-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9OTAwIiwicGF0aCI6IlwvZlwvYzA4NDBlNTktZGI0My00NjgxLWFlN2ItMzFhMDRkYzRiYzU1XC9kN2VxZHZ3LTRlOTdhYzkyLWU0YjktNDQ5OC05NjU1LWU0ZDYxMmViNDc4Yi5wbmciLCJ3aWR0aCI6Ijw9MTYwMCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.X991O1jF5lTNZbbEoHEfoo6nlHEihBMHMIm5-uBCXcU'></img></Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link href="#features">Features</Nav.Link>
-              <Nav.Link href="#pricing">Pricing</Nav.Link>
-              <NavDropdown title="Dropdown" id="collapsible-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
-                  Another action
-                </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">
-                  Separated link
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-            <Nav>
-              <Nav.Link href="#deets">More deets</Nav.Link>
-              <Nav.Link eventKey={2} href="#memes">
-                Dank memes
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
           <Routes>
             <Route path='/home' element={<Homepage />}/>
             <Route path='/features' element={<Features />} />
             
           </Routes>
-        </Router>)
-      }
+        </Router>
+      
       
 
       
