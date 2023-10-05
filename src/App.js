@@ -1,4 +1,5 @@
 import Navbar from 'react-bootstrap/Navbar';
+import {SignInSide} from './login-form'
 
 import '@fontsource/roboto/300.css';
 import Button from 'react-bootstrap/Button';
@@ -9,6 +10,7 @@ import Image from 'react-bootstrap/Image';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
+import Axios from 'axios';
 
 
 import Nav from 'react-bootstrap/Nav';
@@ -22,7 +24,7 @@ import {
   MDBCarousel,
   MDBCarouselItem,
 } from 'mdb-react-ui-kit';
-import {db} from './firebase_config';
+import {auth, db} from './firebase_config';
 
 
 import {useNavigate} from 'react-router-dom';
@@ -30,6 +32,10 @@ import {useNavigate} from 'react-router-dom';
 import {NavbarDefined} from './navbar'
 import {addDoc,collection} from 'firebase/firestore';
 import {getDocs} from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
+
+import {query,where} from 'firebase/firestore';
+
 
 
 
@@ -75,6 +81,7 @@ export const Homepage= () =>{
 
   //   },1000);
   // },[]);
+ 
   const reference=collection(db,"posts");
   const data={
     title:"First Post",
@@ -87,7 +94,7 @@ export const Homepage= () =>{
     addDoc(reference,{
       Title:data.title,
       Description:data.description,
-      Username:'Abhinav_13',
+      Username:'user?.displayName',
       post_id:'3'
     })
 
@@ -101,19 +108,61 @@ export const Homepage= () =>{
       {...doc.data(),post_id:doc.id}
 
     )));
-    console.log(postsList);
+    
     
   }
  
+  
+
+  const [likes,setLikes]= useState(0);
+  const getLikes = (postId) => {
+    const likesRef=collection(db,'likes');
+    const likesDoc=query(likesRef,where('postid','==',postId));
+    const getDocuments = async() => {
+      const  result=await getDocs(likesDoc);
+      let list_of_likes=result.docs.map((doc) => (
+        {...doc.data()}
+  
+      ));
+      console.log(list_of_likes);
+      setLikes(list_of_likes.length);
+    }
+    getDocuments();
+
+
+  }
+  const [userListReact,setUserList]= useState([]);
   useEffect(()=> {
-  getPosts();
-  },[])
+    getPosts();
+    getLikes('6S8IleNGTUcGxy6vYXxi');
+    Axios.get("http://127.0.0.1:5001/getdata").then((res)=> {
+      console.log(res.data)
+      
+
+    });
+    },[])
+  const dataSubmitted= () => {
+    console.log()
+  }
+
   return (
     
     
+    
+    
       <div>
+        {<SignInSide />}
         <Button onClick={addPost} variant='success'>Add a post</Button>
-        {postsList ? postsList.map((each_post) => {return <p>{each_post.Title}</p>}): <p></p>}
+        {postsList && postsList.map((each_post) => {return (<><p>{each_post.Title}</p>
+      {likes && <p>Likes:{likes}</p>}</>)})}
+
+      {/* <p>Users are:</p>
+      {userList && userList.map((each_user) => {
+        return (<><p>{each_user.id}</p>
+        <p>{each_user.email}</p>)</>
+        
+      })} */}
+      
         
 
 <MDBCarousel showIndicators showControls fade>
