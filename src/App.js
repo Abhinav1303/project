@@ -1,5 +1,6 @@
 import Navbar from 'react-bootstrap/Navbar';
 import {SignInSide} from './login-form'
+import {Courses} from './course-page'
 
 import '@fontsource/roboto/300.css';
 import Button from 'react-bootstrap/Button';
@@ -135,11 +136,7 @@ export const Homepage= () =>{
   useEffect(()=> {
     getPosts();
     getLikes('6S8IleNGTUcGxy6vYXxi');
-    Axios.get("http://127.0.0.1:5001/getdata").then((res)=> {
-      console.log(res.data)
-      
-
-    });
+    
     },[])
   const dataSubmitted= () => {
     console.log()
@@ -319,10 +316,10 @@ function App() {
     <div className='App'>
       
         <Router>
-          {<NavbarDefined />}
+        {<Courses />}
         
           <Routes>
-            <Route path='/home' element={<Homepage />}/>
+            <Route path='/home' element={<Courses />}/>
             <Route path='/features' element={<Features />} />
             
           </Routes>
